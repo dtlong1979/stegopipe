@@ -1,0 +1,14 @@
+E6b · Quality & capacity on 13 REAL 256x256 grayscale photos
+     (scikit-image standard test images; payload 40 B; mean ± std)
+     carrier   |        PSNR(dB) |             SSIM |           MSE | cap(bpp)
+     --------------------------------------------------------------------------
+     adaptive  |    72.61± 0.17 |   1.00000±0.00000 |  0.0036±0.0001 |   0.4995
+     amx       |    74.77± 0.11 |   1.00000±0.00000 |  0.0022±0.0001 |   0.2141
+     dct       |    48.41± 0.35 |   0.99237±0.00359 |  0.9399±0.0753 |   0.0151
+     lsb       |    72.68± 0.28 |   0.99999±0.00000 |  0.0035±0.0002 |   0.9995
+     lsbm      |    72.68± 0.28 |   0.99999±0.00000 |  0.0035±0.0002 |   0.9995
+     rdct      |    40.05± 0.52 |   0.95798±0.01743 |  6.4780±0.8260 |   0.0112
+
+     metric cross-check on 'camera' (lsb):
+       PSNR: ours 72.46 dB vs skimage 72.46 dB
+       SSIM: ours 1.00000 vs skimage 0.99999

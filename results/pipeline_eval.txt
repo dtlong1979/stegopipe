@@ -1,0 +1,48 @@
+Environment: Python 3.11.15 on Linux x86_64; numpy 2.4.6; Pillow 12.3.0; cryptography AEAD available
+====================================================================
+E1  Wrong-key detection rate (2000 trials)
+     frame-inner (ours)     : 100.0% detected
+     frame-outer            :   0.0% detected
+     no-frame               :   0.0% detected
+     -> frame-inner (ours) turns a wrong key into a hard error;
+        frame-outer / no-frame return silent garbage.
+====================================================================
+E2  Tamper (1-8 distinct bit flips), outcome rates
+     caught by CRC/magic (FrameError)  : 99.67%
+     harmless (flip hit flags only)    : 0.33%
+     SILENT WRONG DATA accepted        : 0.0000%  <- must be ~0
+     theoretical CRC32 false-negative  : 2^-32 = 2.33e-10
+====================================================================
+E3  Entropy (bits/byte, 8.0 = uniform) of the embedded stream
+     payload_entropy              : 1.870
+     embedded_plain_entropy       : 1.870
+     embedded_encrypted_entropy   : 7.816
+     -> a structured payload lands flat once encrypted.
+====================================================================
+E4  Composability: every carrier x every stage combo recovers
+     carrier   | plain | +frame | +AEAD+frame | +RS+AEAD+frame
+     adaptive  |       ok       |       ok       |       ok       |       ok      
+     amx       |       ok       |       ok       |       ok       |       ok      
+     dct       |       ok       |       ok       |       ok       |       ok      
+     lsb       |       ok       |       ok       |       ok       |       ok      
+     lsbm      |       ok       |       ok       |       ok       |       ok      
+     rdct      |       ok       |       ok       |       ok       |       ok      
+====================================================================
+E5  Overhead: frame header = 14 bytes/payload (magic4+ver1+flags1+len4+crc4); AEAD adds 12-byte nonce + 16-byte tag.
+====================================================================
+E6  Image quality & capacity through the pipeline
+     12 covers 256x256 gray, payload 40 B (0.0049 bpp), mean±std
+     carrier   |       PSNR(dB) |            SSIM |           MSE | cap(bpp)
+     ----------------------------------------------------------------------
+     adaptive  |    72.76±0.15 |  1.00000±0.00000 |  0.0034±0.0001 |   0.4995
+     amx       |    74.87±0.22 |  1.00000±0.00000 |  0.0021±0.0001 |   0.2141
+     dct       |    48.27±0.41 |  0.99984±0.00006 |  0.9718±0.0914 |   0.0151
+     lsb       |    72.69±0.26 |  1.00000±0.00000 |  0.0035±0.0002 |   0.9995
+     lsbm      |    72.69±0.26 |  1.00000±0.00000 |  0.0035±0.0002 |   0.9995
+     rdct      |    39.64±1.18 |  0.99886±0.00022 |  7.3417±2.1475 |   0.0112
+====================================================================
+E7  CRC32 is error-detection, NOT authentication (1000 forgery trials)
+     CRC frame accepts an attacker's forged payload : 100.0%
+     AEAD rejects forged/tampered ciphertext        : 100.0%
+     -> an unkeyed CRC is trivially recomputed by an adversary; only a
+        keyed AEAD tag provides integrity against active tampering.

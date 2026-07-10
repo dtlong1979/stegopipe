@@ -1,0 +1,35 @@
+BOSSBase real-image evaluation
+==============================
+Corpus : 1000 grayscale images, random subset of BOSSBase 1.01, seed 0
+Size   : 256x256 centre-crop
+Payload: 40 bytes (framed, CRC32)
+Command:
+  PYTHONPATH=. python experiments/bossbase_eval.py --data <dir> -n 1000 --size 256
+  PYTHONPATH=. python experiments/bossbase_eval.py --data <dir> -n  600 --size 256 --steganalysis
+
+Quality & capacity on 1000 real images (payload 40 B; mean +/- 95% CI)
+carrier   |         PSNR(dB) |               SSIM | cap(bpp) |  recover
+--------------------------------------------------------------------------
+adaptive  |    72.64+/-0.01 |   1.00000+/-0.00000 |   0.4995 | 1000/1000 (100.0%)
+amx       |    74.78+/-0.01 |   1.00000+/-0.00000 |   0.2141 | 1000/1000 (100.0%)
+dct       |    48.19+/-0.03 |   0.99233+/-0.00022 |   0.0151 |  976/1000 ( 97.6%)
+lsb       |    72.64+/-0.02 |   0.99999+/-0.00000 |   0.9995 | 1000/1000 (100.0%)
+lsbm      |    72.64+/-0.02 |   0.99999+/-0.00000 |   0.9995 | 1000/1000 (100.0%)
+rdct      |    39.69+/-0.04 |   0.96191+/-0.00091 |   0.0112 |  990/1000 ( 99.0%)
+
+Steganalysis detection accuracy (rich features + MLP), 300 train / 300 test, 0.5 = undetectable
+carrier   | accuracy
+----------------------
+adaptive  |    0.502
+amx       |    0.500
+dct       |    0.902
+lsb       |    0.525
+lsbm      |    0.510
+rdct      |    0.878
+
+Notes:
+- Spatial carriers (lsb/lsbm/adaptive/amx) are near-undetectable at this payload
+  because 40 B is a small fraction of their capacity (low relative embedding rate).
+- DCT/QIM carriers (dct/rdct) are detectable here: 40 B is ~30% of their capacity,
+  a high relative embedding rate; they also do not recover exactly on every real
+  textured image (97.6% / 99.0%), unlike the exact spatial carriers (100%).

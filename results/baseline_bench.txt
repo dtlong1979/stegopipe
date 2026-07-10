@@ -1,0 +1,13 @@
+E9 ablation benchmark on 150 BOSSBase images (size 256x256, payload 100 B).
+
+configuration          |  recover | embed B |      PSNR(dB) |       SSIM |    embed ms |  extract ms |  auth?
+----------------------------------------------------------------------------------------------------------
+LSB only               | 150/150 |     100 |  70.08±0.02 | 0.99998 |    0.37±0.06 |    1.50±0.04 |     no
+LSB + frame            | 150/150 |     114 |  69.54±0.03 | 0.99998 |    0.35±0.01 |    1.66±0.02 |     no
+LSB + frame + AEAD     | 150/150 |     142 |  68.65±0.02 | 0.99996 |    1.00±0.99 |    2.09±0.03 |    yes
+stegano (LSB, RGB)     | 150/150 |     100 |  74.87±0.03 | 1.00000 |    2.35±0.04 |    2.25±0.04 |     no
+
+Authentication under a one-bit tamper of the stego image:
+  LSB + frame + AEAD : rejected in 100.0% of trials (keyed tag).
+  LSB + frame (CRC)  : the unkeyed CRC is recomputable; it is not authentication.
+  stegano (LSB)      : no authentication — wrong/garbled output in 100.0% of trials.
